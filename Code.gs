@@ -1,34 +1,58 @@
-// currently pending approval in the chrome web store
+/**
+ * Adds a custom menu with items to show the sidebar and dialog.
+ * 
+ * @param {Object} e The event parameter for a simple onOpen trigger.
+ */
 
-/*** @param {String} cellrange
-@param {String} textdelimiter 
+function onOpen(e) {
+
+  SpreadsheetApp.getUi()
+      .createAddonMenu()
+      .addItem('Learn about EasyConcat', 'INFODIALOG')
+      .addToUi();
+}
+  
+/**
+ * Runs when the add-on is installed; calls onOpen() to ensure menu creation and
+ * any other initializion work is done immediately.
+ *
+ * @param {Object} e The event parameter for a simple onInstall trigger.
+ */
+function onInstall(e) {
+  onOpen(e);
+}
+
+function INFODIALOG() {
+  var html = HtmlService.createHtmlOutputFromFile('ECHelp')
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+      .setTitle('How to use EasyConcat')
+      .setWidth(300);
+  SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
+      .showSidebar(html);
+}
+
+
+/*** @param {cell range} cellrange Highlight a range of cells on the same row
+@param {String} textdelimiter Enter a delimiter between quotes
 @return {String}
 @customfunction ***/
-
-//user inputs cell range (has to be on same row) and a text delimiter
 function EASYCONCAT(cellrange, textdelimiter) {
-  
-//the cellrange will be a two-dimensional array representing the values of each cell in the range; get this and go down one level to get the actual values (if the range went down to the next row, the next row's cell values would be at range[1])
   var range = arguments[0];
   var values = range[0];
-  
-// the text delimiter the person specifies is the second argument
+  if (!(Array.isArray(range))) {
+    throw new Error("Cellrange must be a valid cell range in the sheet");
+  }
   var delimiter = arguments[1]; 
-  
-//create an empty text string to push the cell values + delimiter to
+  if (typeof delimiter != "string" ) {
+    throw new Error("Delimiter must be a string enclosed in quotation marks")
+  }
   var valuelist = "";
-  
-// iterate over the cell values; only push those to valuelist that aren't empty
   for (var item in values) {
     var cleansed = values[item];
     if (cleansed !=""){
        valuelist += cleansed + delimiter;
     }
   }
-  
-// remove the last delimiter by extracting the entire valuelist minus the length of the delimiter
   var trimmed = valuelist.substr(0, valuelist.length-delimiter.length);
-  
-// the return value, trimmed, is what will appear in the destination cell
   return trimmed; 
 }
