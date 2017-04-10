@@ -39,6 +39,8 @@ function INFODIALOG() {
 function EASYCONCAT(cellrange, textdelimiter) {
   var range = arguments[0];
   var values = range[0];
+  var merged = [].concat.apply([], range);
+  
   if (!(Array.isArray(range))) {
     throw new Error("Cellrange must be a valid cell range in the sheet");
   }
@@ -46,10 +48,11 @@ function EASYCONCAT(cellrange, textdelimiter) {
   if (typeof delimiter != "string" ) {
     throw new Error("Delimiter must be a string enclosed in quotation marks")
   }
+  //this first iterated over values, then changed to range for testing, now using merged
   var valuelist = "";
-  for (var item in values) {
-    var cleansed = values[item];
-    if (cleansed !=""){
+  for (i in merged) {
+    var cleansed = merged[i];
+    if (cleansed.length > 0 && cleansed != skipvalue){
        valuelist += cleansed + delimiter;
     }
   }
