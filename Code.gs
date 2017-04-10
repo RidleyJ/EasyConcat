@@ -38,7 +38,6 @@ function INFODIALOG() {
 @customfunction ***/
 function EASYCONCAT(cellrange, textdelimiter) {
   var range = arguments[0];
-  var values = range[0];
   var merged = [].concat.apply([], range);
   
   if (!(Array.isArray(range))) {
